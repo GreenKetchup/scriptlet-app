@@ -1,0 +1,224 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.5">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en" class="transition-colors duration-300"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;title&gt;WaveSurfer A-B Loop&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;link rel="manifest" href="manifest.json"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if ('serviceWorker' in navigator) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>window.addEventListener('load', () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>navigator.serviceWorker.register('service-worker.js')</p>
+<p class="p1"><span class="Apple-converted-space">          </span>.then(reg =&gt; console.log('✅ Service Worker registered:', reg))</p>
+<p class="p1"><span class="Apple-converted-space">          </span>.catch(err =&gt; console.error('❌ Service Worker registration failed:', err));</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://unpkg.com/wavesurfer.js"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://unpkg.com/wavesurfer.js/dist/plugin/regions.min.js"&gt;&lt;/script&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white p-4 font-sans transition-colors duration-300"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="max-w-2xl mx-auto"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="flex justify-between items-center mb-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;h2 class="text-2xl font-bold"&gt;WaveSurfer A-B Loop&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button onclick="toggleDarkMode()" class="text-sm px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition"&gt;🌓 다크모드 토글&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="waveform" class="mb-4 h-24 bg-white dark:bg-gray-800 rounded shadow"&gt;&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;input id="nameInput" class="px-3 py-2 border rounded text-sm dark:bg-gray-800 dark:border-gray-600" placeholder="Enter loop name" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;input id="memoInput" class="px-3 py-2 border rounded text-sm dark:bg-gray-800 dark:border-gray-600" placeholder="Memo (optional)" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;input id="tagInput" class="px-3 py-2 border rounded text-sm dark:bg-gray-800 dark:border-gray-600 col-span-2 md:col-span-1" placeholder="Tags (comma-separated)" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;input id="filterTags" class="px-3 py-2 border rounded text-sm dark:bg-gray-800 dark:border-gray-600 col-span-2" placeholder="🔍 태그 필터 (예: beginner)" oninput="filterByTag()" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button onclick="playPause()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"&gt;▶️ Play&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button onclick="clearLoop()" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 transition"&gt;❌ Clear&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button onclick="saveLoop()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"&gt;💾 Save&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button onclick="exportJSON()" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition"&gt;📦 백업하기&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;input type="file" id="importFile" onchange="importJSON(event)" accept="application/json" class="hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button onclick="document.getElementById('importFile').click()" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition"&gt;📂 불러오기&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="loopInfo" class="text-sm text-gray-600 dark:text-gray-300 mb-4"&gt;Drag to select A-B loop&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="saved-list"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;h3 class="text-lg font-semibold cursor-pointer mb-2" onclick="toggleList()" id="toggleTitle"&gt;🔽 Scriptlets&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="loopItems" class="space-y-3"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function toggleDarkMode() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.documentElement.classList.toggle('dark');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const wavesurfer = WaveSurfer.create({</p>
+<p class="p1"><span class="Apple-converted-space">      </span>container: '#waveform',</p>
+<p class="p1"><span class="Apple-converted-space">      </span>waveColor: '#a0c4ff',</p>
+<p class="p1"><span class="Apple-converted-space">      </span>progressColor: '#4361ee',</p>
+<p class="p1"><span class="Apple-converted-space">      </span>cursorColor: '#333',</p>
+<p class="p1"><span class="Apple-converted-space">      </span>height: 80,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>responsive: true,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>plugins: [</p>
+<p class="p1"><span class="Apple-converted-space">        </span>WaveSurfer.regions.create({ dragSelection: { slop: 5 } })</p>
+<p class="p1"><span class="Apple-converted-space">      </span>]</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>wavesurfer.load('https://www.englishclass101.com/audio-library/english/phrases/english-class101-phrase-003.mp3');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>let loopRegion = null;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let loopCount = 1;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let loopList = [];</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let listVisible = true;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const loopItems = document.getElementById('loopItems');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const nameInput = document.getElementById('nameInput');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const memoInput = document.getElementById('memoInput');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const tagInput = document.getElementById('tagInput');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const filterTags = document.getElementById('filterTags');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const toggleTitle = document.getElementById('toggleTitle');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function toggleList() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>listVisible = !listVisible;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>loopItems.style.display = listVisible ? 'block' : 'none';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>toggleTitle.textContent = listVisible ? '🔽 Scriptlets' : '▶️ Scriptlets';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function playPause() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>wavesurfer.playPause();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function clearLoop() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (loopRegion) loopRegion.remove();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>loopRegion = null;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('loopInfo').innerText = 'Drag to select A-B loop';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function saveLoop() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!loopRegion) return alert("Select a region first.");</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const { start, end } = loopRegion;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const label = nameInput.value.trim() || `Loop ${loopCount}`;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const memo = memoInput.value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const tags = tagInput.value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const loopData = { id: `loop-${loopCount}`, label, memo, tags, start, end };</p>
+<p class="p1"><span class="Apple-converted-space">      </span>loopList.push(loopData);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>addLoopItem(loopData);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>saveToStorage(loopList);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>loopCount++;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>nameInput.value = "";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>memoInput.value = "";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>tagInput.value = "";</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function addLoopItem({ id, label, memo, tags, start, end }) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const item = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>item.className = 'bg-white dark:bg-gray-800 p-4 rounded shadow-sm';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>item.dataset.tags = tags.toLowerCase();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>const info = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>info.innerHTML = `&lt;strong class='text-blue-700 dark:text-blue-400'&gt;${label}&lt;/strong&gt;&lt;br&gt;&lt;span class='text-gray-700 dark:text-gray-300'&gt;${start.toFixed(2)} ~ ${end.toFixed(2)}&lt;/span&gt;&lt;br&gt;&lt;em class='text-sm text-gray-500 dark:text-gray-400'&gt;${memo}&lt;/em&gt;&lt;br&gt;&lt;span class='text-xs text-gray-400 dark:text-gray-500'&gt;#${tags}&lt;/span&gt;`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>const actions = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>actions.className = 'mt-2 flex gap-2';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>const playBtn = document.createElement('button');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>playBtn.textContent = '▶️ Play';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>playBtn.className = 'bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>playBtn.onclick = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>wavesurfer.play(start, end);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>delBtn.classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>const delBtn = document.createElement('button');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>delBtn.textContent = '🗑️ Delete';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>delBtn.className = 'bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 hidden';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>delBtn.onclick = (e) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>e.target.closest('div').parentElement.remove();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>loopList = loopList.filter(loop =&gt; loop.id !== id);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>saveToStorage(loopList);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>actions.appendChild(playBtn);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>actions.appendChild(delBtn);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>item.appendChild(info);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>item.appendChild(actions);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>loopItems.appendChild(item);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function saveToStorage(data) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>localStorage.setItem('savedLoops', JSON.stringify(data));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function loadSavedLoops() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const saved = JSON.parse(localStorage.getItem('savedLoops') || '[]');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>loopItems.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>loopList = saved;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>saved.forEach(loop =&gt; addLoopItem(loop));</p>
+<p class="p1"><span class="Apple-converted-space">      </span>loopCount = saved.length + 1;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function filterByTag() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const filter = filterTags.value.trim().toLowerCase();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.querySelectorAll('#loopItems &gt; div').forEach(item =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const tags = item.dataset.tags || '';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>item.style.display = filter === '' || tags.includes(filter) ? 'block' : 'none';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function exportJSON() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const data = JSON.stringify(loopList);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const blob = new Blob([data], { type: 'application/json' });</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const a = document.createElement('a');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>a.href = URL.createObjectURL(blob);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>a.download = 'loops.json';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>a.click();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function importJSON(event) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const file = event.target.files[0];</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!file) return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>const reader = new FileReader();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>reader.onload = (e) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>const imported = JSON.parse(e.target.result);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>loopList = imported;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>saveToStorage(loopList);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>loopItems.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">          </span>loopCount = 1;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>imported.forEach(loop =&gt; addLoopItem(loop));</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} catch (err) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>alert('Invalid JSON file.');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>};</p>
+<p class="p1"><span class="Apple-converted-space">      </span>reader.readAsText(file);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>wavesurfer.on('region-created', region =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (loopRegion) loopRegion.remove();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>loopRegion = region;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>region.update({ color: 'rgba(255, 165, 0, 0.3)', loop: true });</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('loopInfo').innerText = `A: ${region.start.toFixed(2)}, B: ${region.end.toFixed(2)}`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>loadSavedLoops();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
